@@ -1,0 +1,74 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #e0f7fa; /* Light blue background */
+    color: #004d40; /* Darker shade of teal */
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+.container {
+    margin-top: 50px;
+}
+
+h1 {
+    color: #00796b; /* A nice green shade for headings */
+}
+
+#gameBoard {
+    display: grid;
+    grid-template-columns: repeat(3, 100px); /* 3 columns */
+    grid-gap: 5px; /* Space between cells */
+    margin: 20px auto; /* Center the game board */
+    width: 320px; /* Fixed width for the board */
+}
+
+.cell {
+    width: 100px; /* Cell width */
+    height: 100px; /* Cell height */
+    background-color: #ffffff; /* White background for cells */
+    border: 2px solid #00796b; /* Border color */
+    font-size: 36px; /* Font size for the marks */
+    display: flex;
+    justify-content: center;
+    align-items: center; /* Center the text */
+    cursor: pointer; /* Change cursor to pointer */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+.cell:hover {
+    background-color: #b2dfdb; /* Change background on hover */
+}
+
+#message {
+    margin: 20px 0; /* Margin for message */
+    font-size: 24px; /* Font size for messages */
+    color: #d32f2f; /* Red color for messages */
+}
+
+.play-again-container {
+    display: flex;
+    justify-content: center; /* Center the button */
+    margin-top: 20px; /* Space above button */
+}
+
+button {
+    background-color: #00796b; /* Button background color */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    padding: 10px 20px; /* Button padding */
+    font-size: 18px; /* Button font size */
+    cursor: pointer; /* Change cursor to pointer */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s; /* Smooth background transition */
+}
+
+button:hover {
+    background-color: #004d40; /* Darker shade on hover */
+}
+
+footer {
+    margin-top: 20px; /* Space above footer */
+    font-size: 14px; /* Smaller font size for footer */
+    color: #004d40; /* Color for footer text */
+}

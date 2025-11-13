@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic Tac Toe Multiplayer</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container" id="lobby">
+        <h2>Create or Join a Game</h2>
+        <button id="createGameBtn">Create Game</button>
+        <input type="text" id="joinGameInput" placeholder="Enter Game ID to Join">
+        <button id="joinGameBtn">Join Game</button>
+        <p id="gameLink"></p>
+    </div>
+
+    <div id="game" style="display:none;">
+        <h1>Tic Tac Toe</h1>
+        <div id="gameBoard"></div>
+        <p id="message"></p>
+        <div class="play-again-container">
+            <button id="playAgainBtn" style="display:none;">Play Again</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>Made with ❤️ by Inndhar</p>
+    </footer>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        const gameBoard = document.getElementById('gameBoard');
+        const message = document.getElementById('message');
+        const playerRoleMessage = document.createElement('p'); // Add a new message to indicate player role
+        gameBoard.before(playerRoleMessage); // Insert it before the game board
+        const playAgainBtn = document.getElementById('playAgainBtn');
+    
+        // Create empty game board
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.classList.add('cell');
+            cell.addEventListener('click', () => handleCellClick(i));
+            gameBoard.appendChild(cell);
+        }
+    
+        let playerSymbol = '';
+        let roomId;
+    
+        document.getElementById('createGameBtn').addEventListener('click', () => {
+            roomId = Math.random().toString(36).substr(2, 9); // Generate random room ID
+            socket.emit('createGame', roomId);
+            document.getElementById('gameLink').textContent = `Share this Game ID: ${roomId}`;
+        });
+    
+        document.getElementById('joinGameBtn').addEventListener('click', () => {
+            roomId = document.getElementById('joinGameInput').value;
+            socket.emit('joinGame', roomId);
+        });
+    
+        socket.on('assignedRole', (role) => {
+            playerSymbol = role;
+            playerRoleMessage.textContent = `You are '${role}'`; // Indicate the player's assigned role
+        });
+    
+        socket.on('startGame', () => {
+            document.getElementById('lobby').style.display = 'none';
+            document.getElementById('game').style.display = 'block';
+            updateTurnMessage('X'); // Default to "X's Turn" at the start of the game
+        });
+    
+        function handleCellClick(index) {
+            if (gameBoard.children[index].textContent || !playerSymbol) return;
+            socket.emit('makeMove', { roomId, index, symbol: playerSymbol });
+        }
+    
+        function updateTurnMessage(currentTurn) {
+            message.textContent = `${currentTurn}'s Turn`; // Update to "X's Turn" or "O's Turn"
+        }
+    
+        socket.on('updateBoard', ({ index, symbol }) => {
+            gameBoard.children[index].textContent = symbol;
+            const nextTurn = symbol === 'X' ? 'O' : 'X'; // Determine whose turn it is next
+            updateTurnMessage(nextTurn); // Update the message to reflect the next turn
+        });
+    
+        socket.on('endGame', ({ winner }) => {
+            if (winner === 'Draw') {
+                message.textContent = "It's a draw!";
+            } else {
+                message.textContent = `Player ${winner} wins!`;
+            }
+            playAgainBtn.style.display = 'block'; // Show the play again button
+        });
+    
+        playAgainBtn.addEventListener('click', () => {
+            socket.emit('resetGame', roomId);
+        });
+    
+        socket.on('resetBoard', () => {
+            for (let cell of gameBoard.children) {
+                cell.textContent = ''; // Clear the board
+            }
+            playAgainBtn.style.display = 'none'; // Hide the play again button
+            updateTurnMessage('X'); // Reset turn message to "X's Turn" at the beginning of a new game
+        });
+    
+        socket.on('error', (message) => {
+            alert(message);
+        });
+    </script>
+    
+</body>
+</html>
