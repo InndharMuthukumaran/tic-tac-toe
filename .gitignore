@@ -1,0 +1,31 @@
+
+---
+
+### ⚙️ **.gitignore**
+```gitignore
+# OS-generated files
+.DS_Store
+Thumbs.db
+
+# IDE and editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+
+# Build or temp files
+dist/
+node_modules/
+tmp/
+temp/
+
+# Backup files
+*.bak
+*.tmp
+*.old
+
+# Cache
+.cache/
